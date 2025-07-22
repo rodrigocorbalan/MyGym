@@ -555,27 +555,31 @@
 
 
 window.gapiLoaded = () => {
-    console.log('gapiLoaded');
+    console.log('SUCESSO: gapi.js carregado.'); // <-- ADICIONE AQUI
     gapi.load('client', initializeGapiClient);
 };
+
 window.gisLoaded = () => {
-    console.log('gisLoaded');
+    console.log('SUCESSO: gsi/client carregado.'); // <-- ADICIONE AQUI
     tokenClient = google.accounts.oauth2.initTokenClient({
         client_id: GOOGLE_CONFIG.CLIENT_ID,
         scope: 'https://www.googleapis.com/auth/spreadsheets',
         callback: '',
     });
     gisInited = true;
+    console.log('ETAPA: gisInited definido como true.'); // <-- ADICIONE AQUI
     maybeEnableButtons();
 };
+
         async function initializeGapiClient() {
-            await gapi.client.init({
-                apiKey: GOOGLE_CONFIG.API_KEY,
-                discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
-            });
-            gapiInited = true;
-            maybeEnableButtons();
-        }
+    await gapi.client.init({
+        apiKey: GOOGLE_CONFIG.API_KEY,
+        discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
+    });
+    gapiInited = true;
+    console.log('ETAPA: gapiInited definido como true.'); // <-- ADICIONE AQUI
+    maybeEnableButtons();
+}
 
         function maybeEnableButtons() {
           if (gapiInited && gisInited) {
@@ -588,8 +592,10 @@ window.gisLoaded = () => {
 }
         
         function handleAuthClick() {
-            if (typeof gapi === 'undefined' || typeof gapi.client === 'undefined') {
-        alert('Google API não carregada. Aguarde alguns segundos e tente novamente.');
+    // Adicione este log para sabermos o estado exato no momento do clique
+    console.log(`CLIQUE: handleAuthClick chamado. Estado: gapiInited=${gapiInited}, gisInited=${gisInited}`);
+    if (typeof gapi === 'undefined' || typeof gapi.client === 'undefined' || !gapiInited || !gisInited) {
+        alert('Google API não carregada ou inicializada. Aguarde e tente novamente.');
         return;
     }
             tokenClient.callback = async (resp) => {

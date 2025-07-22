@@ -598,25 +598,21 @@
         }
 }
         
-        function handleAuthClick() {
-    // Adicione este log para sabermos o estado exato no momento do clique
-    console.log(`CLIQUE: handleAuthClick chamado. Estado: gapiInited=${gapiInited}, gisInited=${gisInited}`);
-    if (typeof gapi === 'undefined' || typeof gapi.client === 'undefined' || !gapiInited || !gisInited) {
-        alert('Google API não carregada ou inicializada. Aguarde e tente novamente.');
-        return;
+function handleAuthClick() {
+    tokenClient.callback = async (resp) => {
+      if (resp.error !== undefined) throw (resp);
+      document.getElementById('signin-button').style.display = 'none';
+      document.getElementById('signout-button').style.display = 'block';
+      updateSyncStatus(); // Apenas atualizamos o status visual
+      alert('Login realizado com sucesso! Sincronize seus dados na aba "Dados".');
+    };
+
+    if (gapi.client.getToken() === null) {
+        tokenClient.requestAccessToken({prompt: 'consent'});
+    } else {
+        tokenClient.requestAccessToken({prompt: ''});
     }
-            tokenClient.callback = async (resp) => {
-              if (resp.error !== undefined) throw (resp);
-              document.getElementById('signin-button').style.display = 'none';
-              document.getElementById('signout-button').style.display = 'block';
-              await syncData(); // Sincroniza logo após o login
-            };
-            if (gapi.client.getToken() === null) {
-                tokenClient.requestAccessToken({prompt: 'consent'});
-            } else {
-                tokenClient.requestAccessToken({prompt: ''});
-            }
-        }
+}
         
         function handleSignoutClick() {
             const token = gapi.client.getToken();

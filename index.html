@@ -5,7 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <title>MyGym</title>
-    <meta name="description" content="MyGym - Gerencie seus treinos na academia de forma inteligente.">
+
+    <meta charset="UTF-8">
+    <title>MyGym</title>
+    <script>
+        const GOOGLE_CONFIG = {
+            API_KEY: "PLACEHOLDER_API_KEY",
+            CLIENT_ID: "PLACEHOLDER_CLIENT_ID",
+            SPREADSHEET_ID: "PLACEHOLDER_SPREADSHEET_ID",
+            SHEETS: {
+                EXERCISES: 'Exercises',
+                PRESENCE: 'PresenceHistory',
+                CARDIO: 'CardioHistory'
+            }
+        };
+    </script>
+    <meta name="description" content="MyGym - Gerencie seus treinos com foco.">
     <meta name="theme-color" content="#ffffff"/>
     <link rel="apple-touch-icon" href="https://placehold.co/192x192/8f44fd/ffffff?text=Gym">
     <link rel="manifest" href="manifest.json">
@@ -204,7 +219,6 @@
         </div>
     </div>
 
-    <script src="config.js"></script>
     <script>
         // --- CONFIGURAÇÃO INICIAL ---
         const pages = document.querySelectorAll('.page');

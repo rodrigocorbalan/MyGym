@@ -1,32 +1,66 @@
-// Em sw.js
-const CACHE_NAME = 'mygym-cache-v3'; // Mude a versão para o navegador atualizar o cache
+// Em sw.js - VERSÃO MELHORADA
+
+// 1. Atualize o nome do cache para forçar a reinstalação
+const CACHE_NAME = 'mygym-cache-v4'; 
 const urlsToCache = [
     '/',
     'index.html',
-    'config.js', // FICHEIRO ADICIONADO
+    'config.js',
     'manifest.json',
-    'logo-mygym.png', // Adicionei o seu logo também
-    'favicon.png', // E o favicon
-    'https://placehold.co/192x192/8f44fd/ffffff?text=Gym', // Ícone do manifesto
-    'https://placehold.co/512x512/8f44fd/ffffff?text=Gym', // Ícone do manifesto
-    'https://cdn.tailwindcss.com', // Tailwind CSS
-    'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap', // Fontes
-    'https://cdn.jsdelivr.net/npm/chart.js' // Biblioteca de gráficos
+    'logo-mygym.png',
+    'favicon.png',
+    'https://cdn.tailwindcss.com',
+    'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap',
+    'https://cdn.jsdelivr.net/npm/chart.js'
 ];
 
-// Evento de Instalação: Salva os arquivos principais em cache
+// 2. Evento de Instalação (continua igual)
+// Guarda os arquivos principais em cache quando o Service Worker é instalado
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then(cache => {
-                console.log('Cache aberto');
+                console.log('Service Worker: Cache aberto e ficheiros adicionados');
                 return cache.addAll(urlsToCache);
             })
     );
 });
 
-// Evento de Fetch: Intercepta as requisições
+// 3. Evento de Ativação (continua igual)
+// Limpa caches antigos para economizar espaço
+self.addEventListener('activate', event => {
+    const cacheWhitelist = [CACHE_NAME];
+    event.waitUntil(
+        caches.keys().then(cacheNames => {
+            return Promise.all(
+                cacheNames.map(cacheName => {
+                    if (cacheWhitelist.indexOf(cacheName) === -1) {
+                        console.log('Service Worker: A limpar cache antigo:', cacheName);
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        })
+    );
+});
+
+// 4. Evento de Fetch (ESTRATÉGIA ATUALIZADA)
+// Intercepta as requisições
 self.addEventListener('fetch', event => {
+    // Apenas para requisições de navegação (ex: abrir a página)
+    if (event.request.mode === 'navigate') {
+        event.respondWith(
+            // Tenta primeiro buscar da rede
+            fetch(event.request)
+                .catch(() => {
+                    // Se a rede falhar (offline), busca a página principal do cache
+                    return caches.match('index.html');
+                })
+        );
+        return;
+    }
+
+    // Para todos os outros recursos (CSS, JS, imagens)
     event.respondWith(
         caches.match(event.request)
             .then(response => {
@@ -37,21 +71,5 @@ self.addEventListener('fetch', event => {
                 // Senão, busca na rede
                 return fetch(event.request);
             })
-    );
-});
-
-// Evento de Ativação: Limpa caches antigos
-self.addEventListener('activate', event => {
-    const cacheWhitelist = [CACHE_NAME];
-    event.waitUntil(
-        caches.keys().then(cacheNames => {
-            return Promise.all(
-                cacheNames.map(cacheName => {
-                    if (cacheWhitelist.indexOf(cacheName) === -1) {
-                        return caches.delete(cacheName);
-                    }
-                })
-            );
-        })
     );
 });

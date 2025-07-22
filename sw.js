@@ -1,13 +1,12 @@
-const CACHE_NAME = 'mygym-cache-v8'; // VERSÃO ATUALIZADA
+const CACHE_NAME = 'mygym-cache-v9'; // VERSÃO ATUALIZADA
 const urlsToCache = [
     '/mygym/',
     '/mygym/index.html',
     '/mygym/manifest.json',
     '/mygym/logo-mygym.png',
-    '/mygym/favicon.png', // Agora com caminho absoluto
-    'https://cdn.tailwindcss.com',
-    'https://cdn.jsdelivr.net/npm/chart.js'
+    '/mygym/favicon.png'
 ];
+
 // ... o resto do ficheiro continua exatamente igual
 
 // 2. Evento de Instalação (continua igual)

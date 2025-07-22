@@ -3,7 +3,14 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main # Ou a branch que você usa como principal
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
 
 jobs:
   deploy:

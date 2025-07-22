@@ -69,8 +69,8 @@
         </header>
 
         <nav class="bg-white rounded-lg shadow-sm p-2 flex justify-around mb-8">
-            <button data-page="treinos" class="nav-link flex-1 text-center p-2 rounded-md transition-all duration-300">🏋️ Treinos</button>
             <button data-page="presenca" class="nav-link flex-1 text-center p-2 rounded-md transition-all duration-300">📅 Presença</button>
+            <button data-page="treinos" class="nav-link flex-1 text-center p-2 rounded-md transition-all duration-300">🏋️ Treinos</button>
             <button data-page="cardio" class="nav-link flex-1 text-center p-2 rounded-md transition-all duration-300">🏃 Cardio</button>
             <button data-page="dados" class="nav-link flex-1 text-center p-2 rounded-md transition-all duration-300">📊 Dados</button>
         </nav>
@@ -726,7 +726,7 @@ window.gisLoaded = () => {
         // --- INICIALIZAÇÃO DA APLICAÇÃO ---
         window.addEventListener('load', () => {
             loadLocalData();
-            switchPage('treinos');
+            switchPage('presenca');
             render();
             
             // Lógica para sincronizar ao ficar online

@@ -588,29 +588,44 @@
     maybeEnableButtons();
 }
 
-        function maybeEnableButtons() {
-          if (gapiInited && gisInited) {
-            const signinButton = document.getElementById('signin-button');
+// EM index.html, SUBSTITUA AS SUAS FUNÇÕES POR ESTAS:
+
+function maybeEnableButtons() {
+    console.log(`Tentando ativar botão: gapiInited=${gapiInited}, gisInited=${gisInited}`);
+    if (gapiInited && gisInited) {
+        const signinButton = document.getElementById('signin-button');
+        if (signinButton) {
             signinButton.disabled = false;
             signinButton.textContent = 'Fazer Login com Google';
             signinButton.classList.remove('bg-blue-300', 'cursor-not-allowed');
             signinButton.classList.add('bg-blue-500', 'hover:bg-blue-600');
+            console.log("SUCESSO FINAL: Botão de login ativado!");
         }
+    }
 }
-        
+
 function handleAuthClick() {
+    console.log(`CLIQUE: handleAuthClick chamado.`);
+    if (!gapiInited || !gisInited || !tokenClient) {
+        alert('A API do Google ainda não está pronta. Por favor, aguarde um momento.');
+        return;
+    }
+
     tokenClient.callback = async (resp) => {
-      if (resp.error !== undefined) throw (resp);
-      document.getElementById('signin-button').style.display = 'none';
-      document.getElementById('signout-button').style.display = 'block';
-      updateSyncStatus(); // Apenas atualizamos o status visual
-      alert('Login realizado com sucesso! Sincronize seus dados na aba "Dados".');
+        if (resp.error !== undefined) {
+            console.error('Erro no callback do token:', resp);
+            throw (resp);
+        }
+        document.getElementById('signin-button').style.display = 'none';
+        document.getElementById('signout-button').style.display = 'block';
+        updateSyncStatus();
+        alert('Login realizado com sucesso!');
     };
 
     if (gapi.client.getToken() === null) {
-        tokenClient.requestAccessToken({prompt: 'consent'});
+        tokenClient.requestAccessToken({ prompt: 'consent' });
     } else {
-        tokenClient.requestAccessToken({prompt: ''});
+        tokenClient.requestAccessToken({ prompt: '' });
     }
 }
         

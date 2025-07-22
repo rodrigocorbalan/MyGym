@@ -1,7 +1,7 @@
 // Em sw.js - VERSÃO MELHORADA
 
 // 1. Atualize o nome do cache para forçar a reinstalação
-const CACHE_NAME = 'mygym-cache-v4'; 
+const CACHE_NAME = 'mygym-cache-v5'; // VERSÃO ATUALIZADA
 const urlsToCache = [
     '/',
     'index.html',
@@ -10,9 +10,10 @@ const urlsToCache = [
     'logo-mygym.png',
     'favicon.png',
     'https://cdn.tailwindcss.com',
-    'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap',
+    // A linha do googleapis foi removida
     'https://cdn.jsdelivr.net/npm/chart.js'
 ];
+// ... o resto do ficheiro continua igual
 
 // 2. Evento de Instalação (continua igual)
 // Guarda os arquivos principais em cache quando o Service Worker é instalado

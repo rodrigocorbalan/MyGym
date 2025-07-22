@@ -590,16 +590,26 @@
 
 // EM index.html, SUBSTITUA AS SUAS FUNÇÕES POR ESTAS:
 
+// EM index.html, SUBSTITUA A SUA FUNÇÃO 'maybeEnableButtons' POR ESTA:
+
 function maybeEnableButtons() {
     console.log(`Tentando ativar botão: gapiInited=${gapiInited}, gisInited=${gisInited}`);
     if (gapiInited && gisInited) {
         const signinButton = document.getElementById('signin-button');
-        if (signinButton) {
+        const signoutButton = document.getElementById('signout-button');
+
+        if (signinButton && signoutButton) {
+            // Ativa o botão de login
             signinButton.disabled = false;
             signinButton.textContent = 'Fazer Login com Google';
             signinButton.classList.remove('bg-blue-300', 'cursor-not-allowed');
             signinButton.classList.add('bg-blue-500', 'hover:bg-blue-600');
-            console.log("SUCESSO FINAL: Botão de login ativado!");
+
+            // Anexa os eventos de clique AQUI DENTRO!
+            signinButton.addEventListener('click', handleAuthClick);
+            signoutButton.addEventListener('click', handleSignoutClick);
+
+            console.log("SUCESSO FINAL: Botão de login ativado e eventos de clique anexados!");
         }
     }
 }
@@ -714,13 +724,7 @@ function handleAuthClick() {
                 saveLocalData();
                 render();
             }
-        }        // ...existing code...
-        document.getElementById('signin-button').addEventListener('click', () => {
-    console.log('Botão de login clicado');
-    handleAuthClick();
-});
-        document.getElementById('signout-button').addEventListener('click', handleSignoutClick);
-        // ...existing code...        // ...existing code...
+        }        
 
 
         async function findAndDeleteRow(sheetName, recordId) {

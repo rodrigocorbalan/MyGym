@@ -81,7 +81,7 @@
                 <h2 class="text-xl font-bold mb-4">Sincronização com Google Sheets</h2>
                 <p class="text-gray-600 mb-4">Para salvar e carregar seus dados na nuvem, faça login com sua conta Google e autorize o acesso à planilha.</p>
                 <div id="auth-container">
-                    <button id="signin-button" class="w-full bg-blue-500 text-white p-3 rounded-md font-semibold hover:bg-blue-600">Fazer Login com Google</button>
+                    <button id="signin-button" class="w-full bg-blue-300 text-white p-3 rounded-md font-semibold cursor-not-allowed" disabled>Aguarde, carregando API...</button>
                     <button id="signout-button" class="hidden w-full bg-red-500 text-white p-3 rounded-md font-semibold hover:bg-red-600">Sair da Conta</button>
                 </div>
               </div>
@@ -564,10 +564,14 @@ window.gisLoaded = () => {
         }
 
         function maybeEnableButtons() {
-            if (gapiInited && gisInited) {
-                document.getElementById('signin-button').style.display = 'block';
-            }
+          if (gapiInited && gisInited) {
+            const signinButton = document.getElementById('signin-button');
+            signinButton.disabled = false;
+            signinButton.textContent = 'Fazer Login com Google';
+            signinButton.classList.remove('bg-blue-300', 'cursor-not-allowed');
+            signinButton.classList.add('bg-blue-500', 'hover:bg-blue-600');
         }
+}
         
         function handleAuthClick() {
             if (typeof gapi === 'undefined' || typeof gapi.client === 'undefined') {

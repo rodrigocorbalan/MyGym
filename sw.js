@@ -1,9 +1,12 @@
 // Em sw.js
-const CACHE_NAME = 'mygym-cache-v2'; // Mude a versão para o navegador atualizar o cache
+const CACHE_NAME = 'mygym-cache-v3'; // Mude a versão para o navegador atualizar o cache
 const urlsToCache = [
     '/',
     'index.html',
+    'config.js', // FICHEIRO ADICIONADO
     'manifest.json',
+    'logo-mygym.png', // Adicionei o seu logo também
+    'favicon.png', // E o favicon
     'https://placehold.co/192x192/8f44fd/ffffff?text=Gym', // Ícone do manifesto
     'https://placehold.co/512x512/8f44fd/ffffff?text=Gym', // Ícone do manifesto
     'https://cdn.tailwindcss.com', // Tailwind CSS

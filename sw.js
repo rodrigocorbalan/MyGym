@@ -1,14 +1,10 @@
-// Em sw.js - VERSÃO FINAL CORRIGIDA
-
-// 1. Atualize o nome do cache para forçar a reinstalação
-const CACHE_NAME = 'mygym-cache-v6'; // VERSÃO ATUALIZADA
+const CACHE_NAME = 'mygym-cache-v8'; // VERSÃO ATUALIZADA
 const urlsToCache = [
-    '/',
-    'index.html',
-    // 'config.js',  // <-- LINHA REMOVIDA
-    'manifest.json',
-    'logo-mygym.png',
-    'favicon.png',
+    '/mygym/',
+    '/mygym/index.html',
+    '/mygym/manifest.json',
+    '/mygym/logo-mygym.png',
+    '/mygym/favicon.png', // Agora com caminho absoluto
     'https://cdn.tailwindcss.com',
     'https://cdn.jsdelivr.net/npm/chart.js'
 ];

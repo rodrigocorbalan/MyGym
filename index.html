@@ -54,7 +54,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;7700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <link rel="icon" type="image/png" href="favicon.png">
@@ -593,23 +593,17 @@
 // EM index.html, SUBSTITUA A SUA FUNÇÃO 'maybeEnableButtons' POR ESTA:
 
 function maybeEnableButtons() {
+    // Esta função agora APENAS ativa o botão.
+    // O evento de clique será adicionado no load da página.
     console.log(`Tentando ativar botão: gapiInited=${gapiInited}, gisInited=${gisInited}`);
     if (gapiInited && gisInited) {
         const signinButton = document.getElementById('signin-button');
-        const signoutButton = document.getElementById('signout-button');
-
-        if (signinButton && signoutButton) {
-            // Ativa o botão de login
+        if (signinButton) {
             signinButton.disabled = false;
             signinButton.textContent = 'Fazer Login com Google';
             signinButton.classList.remove('bg-blue-300', 'cursor-not-allowed');
             signinButton.classList.add('bg-blue-500', 'hover:bg-blue-600');
-
-            // Anexa os eventos de clique AQUI DENTRO!
-            signinButton.addEventListener('click', handleAuthClick);
-            signoutButton.addEventListener('click', handleSignoutClick);
-
-            console.log("SUCESSO FINAL: Botão de login ativado e eventos de clique anexados!");
+            console.log("SUCESSO FINAL: Botão de login ativado!");
         }
     }
 }
@@ -621,7 +615,8 @@ function handleAuthClick() {
         return;
     }
 
-    tokenClient.callback = async (resp) => {
+    // Define o que acontece DEPOIS que o login for bem-sucedido.
+    tokenClient.callback = (resp) => {
         if (resp.error !== undefined) {
             console.error('Erro no callback do token:', resp);
             throw (resp);
@@ -632,9 +627,12 @@ function handleAuthClick() {
         alert('Login realizado com sucesso!');
     };
 
+    // Pede ao utilizador para fazer login.
     if (gapi.client.getToken() === null) {
+        // Se não houver token, pede consentimento (mostra a janela de login do Google).
         tokenClient.requestAccessToken({ prompt: 'consent' });
     } else {
+        // Se já houver um token, tenta obter um novo sem pedir consentimento.
         tokenClient.requestAccessToken({ prompt: '' });
     }
 }
@@ -774,6 +772,11 @@ function handleAuthClick() {
             loadLocalData();
             switchPage('presenca');
             render();
+
+            // ANEXA OS EVENTOS DE CLIQUE DEPOIS DE TUDO CARREGAR
+            document.getElementById('signin-button').addEventListener('click', handleAuthClick);
+            document.getElementById('signout-button').addEventListener('click', handleSignoutClick);
+
             
             // Lógica para sincronizar ao ficar online
             window.addEventListener('online', () => {

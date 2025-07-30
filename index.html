@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <title>MyGym</title>
-
-    <meta charset="UTF-8">
-    <title>MyGym</title>
     <script>
         const GOOGLE_CONFIG = {
             API_KEY: "PLACEHOLDER_API_KEY",
@@ -26,28 +23,6 @@
     <link rel="manifest" href="manifest.json">
 
     <script src="https://cdn.tailwindcss.com"></script>
-
-
-    <script>
-        // Estas funções precisam de estar aqui para serem encontradas pelo 'onload' dos scripts do Google
-        function gapiLoaded() {
-            console.log('Callback gapiLoaded() chamado.');
-            gapi.load('client', initializeGapiClient);
-        }
-
-        function gisLoaded() {
-            console.log('Callback gisLoaded() chamado.');
-            tokenClient = google.accounts.oauth2.initTokenClient({
-                client_id: GOOGLE_CONFIG.CLIENT_ID,
-                scope: 'https://www.googleapis.com/auth/spreadsheets',
-                callback: '',
-            });
-            gisInited = true;
-            console.log('ETAPA: gisInited definido como true.');
-            maybeEnableButtons();
-        }
-    </script>
-
 
     <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
     <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
@@ -574,69 +549,74 @@
 
         // --- LÓGICA DE SINCRONIZAÇÃO GOOGLE SHEETS ---
 
-        // Funções de inicialização chamadas pelos scripts do Google no <head>
-
-
-
-        async function initializeGapiClient() {
-    await gapi.client.init({
-        apiKey: GOOGLE_CONFIG.API_KEY,
-        discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
-    });
-    gapiInited = true;
-    console.log('ETAPA: gapiInited definido como true.'); // <-- ADICIONE AQUI
-    maybeEnableButtons();
-}
-
-// EM index.html, SUBSTITUA AS SUAS FUNÇÕES POR ESTAS:
-
-// EM index.html, SUBSTITUA A SUA FUNÇÃO 'maybeEnableButtons' POR ESTA:
-
-function maybeEnableButtons() {
-    // Esta função agora APENAS ativa o botão.
-    // O evento de clique será adicionado no load da página.
-    console.log(`Tentando ativar botão: gapiInited=${gapiInited}, gisInited=${gisInited}`);
-    if (gapiInited && gisInited) {
-        const signinButton = document.getElementById('signin-button');
-        if (signinButton) {
-            signinButton.disabled = false;
-            signinButton.textContent = 'Fazer Login com Google';
-            signinButton.classList.remove('bg-blue-300', 'cursor-not-allowed');
-            signinButton.classList.add('bg-blue-500', 'hover:bg-blue-600');
-            console.log("SUCESSO FINAL: Botão de login ativado!");
+        // Estas funções são chamadas pelos atributos 'onload' nos scripts do Google API
+        function gapiLoaded() {
+            console.log('Callback gapiLoaded() chamado.');
+            gapi.load('client', initializeGapiClient);
         }
-    }
-}
 
-function handleAuthClick() {
-    console.log(`CLIQUE: handleAuthClick chamado.`);
-    if (!gapiInited || !gisInited || !tokenClient) {
-        alert('A API do Google ainda não está pronta. Por favor, aguarde um momento.');
-        return;
-    }
-
-    // Define o que acontece DEPOIS que o login for bem-sucedido.
-    tokenClient.callback = (resp) => {
-        if (resp.error !== undefined) {
-            console.error('Erro no callback do token:', resp);
-            throw (resp);
+        function gisLoaded() {
+            console.log('Callback gisLoaded() chamado.');
+            tokenClient = google.accounts.oauth2.initTokenClient({
+                client_id: GOOGLE_CONFIG.CLIENT_ID,
+                scope: 'https://www.googleapis.com/auth/spreadsheets',
+                callback: '', // O callback real é definido dinamicamente em handleAuthClick
+            });
+            gisInited = true;
+            console.log('ETAPA: gisInited definido como true.');
+            maybeEnableButtons();
         }
-        document.getElementById('signin-button').style.display = 'none';
-        document.getElementById('signout-button').style.display = 'block';
-        updateSyncStatus();
-        alert('Login realizado com sucesso!');
-    };
-
-    // Pede ao utilizador para fazer login.
-    if (gapi.client.getToken() === null) {
-        // Se não houver token, pede consentimento (mostra a janela de login do Google).
-        tokenClient.requestAccessToken({ prompt: 'consent' });
-    } else {
-        // Se já houver um token, tenta obter um novo sem pedir consentimento.
-        tokenClient.requestAccessToken({ prompt: '' });
-    }
-}
         
+        async function initializeGapiClient() {
+            await gapi.client.init({
+                apiKey: GOOGLE_CONFIG.API_KEY,
+                discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
+            });
+            gapiInited = true;
+            console.log('ETAPA: gapiInited definido como true.');
+            maybeEnableButtons();
+        }
+
+        function maybeEnableButtons() {
+            console.log(`Tentando ativar botão: gapiInited=${gapiInited}, gisInited=${gisInited}`);
+            if (gapiInited && gisInited) {
+                const signinButton = document.getElementById('signin-button');
+                if (signinButton) {
+                    signinButton.disabled = false;
+                    signinButton.textContent = 'Fazer Login com Google';
+                    signinButton.classList.remove('bg-blue-300', 'cursor-not-allowed');
+                    signinButton.classList.add('bg-blue-500', 'hover:bg-blue-600');
+                    console.log("SUCESSO FINAL: Botão de login ativado!");
+                }
+            }
+        }
+
+        // --- COLE ESTE BLOCO CORRIGIDO NO SEU CÓDIGO ---
+
+        function handleAuthClick() {
+            if (!gapiInited || !gisInited || !tokenClient) {
+                alert('A API do Google ainda não está pronta. Por favor, aguarde um momento.');
+                return;
+            }
+
+            tokenClient.callback = async (resp) => {
+                if (resp.error !== undefined) {
+                    throw (resp);
+                }
+                // Callback executado após o login do utilizador
+                document.getElementById('signin-button').style.display = 'none';
+                document.getElementById('signout-button').style.display = 'block';
+                
+                // Após o login, sincroniza os dados imediatamente
+                await syncData(); 
+            };
+            
+            // Pede o token de acesso (abre o popup de login do Google)
+            if (gapi.client.getToken() === null) {
+                tokenClient.requestAccessToken({prompt: 'consent'});
+            }
+        }
+
         function handleSignoutClick() {
             const token = gapi.client.getToken();
             if (token !== null) {
@@ -647,6 +627,8 @@ function handleAuthClick() {
                 updateSyncStatus();
             }
         }
+
+        // --- FIM DO BLOCO PARA COLAR ---
 
         async function syncData() {
             if (isSyncing) { alert('Sincronização em andamento.'); return; }
